@@ -60,15 +60,16 @@ public class ExportRoutine : MonoBehaviour
         }
 
         //At Last Photo
-        if (photoIndexCounter == 17)
+        if (photoIndexCounter == 17 && allScreenshotsTaken == false)
         {
+            //Increament itemListNum for the SpawnList
+            itemListNum++;
+
             //Destroy AND LOADS Load New Object / Increment 
-            LoadItemAtIndex(m_itemList, itemListNum++);
-
-
-
+            LoadItemAtIndex(m_itemList, itemListNum);
+            
             //Reset
-            //photoIndexCounter = 0;
+            photoIndexCounter = 0;
 
             Debug.Log("Photos finshed for this object, moving onto the next one!");
         }
