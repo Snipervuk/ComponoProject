@@ -155,9 +155,12 @@ MonoBehaviour:
   m_assetLoadedAsset:
     m_AssetGUID: 344eb8e611bc11c4ab8a6ba37aaa95b2
     m_SubObjectName: 
-  m_instanceObject: {fileID: 0}
+  m_instanceObject: {fileID: 4462375686572628422, guid: 344eb8e611bc11c4ab8a6ba37aaa95b2,
+    type: 3}
   StartingEulerAngles: {x: 0, y: 0, z: 0}
   photoIndexCounter: 0
+  itemListNum: 0
+  objectNameGet: 
 --- !u!4 &602650274
 Transform:
   m_ObjectHideFlags: 0
