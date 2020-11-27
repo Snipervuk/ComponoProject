@@ -151,10 +151,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3073151d7aa7edf4787e47350a5c1119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_referenceCamera: {fileID: 963194227}
   m_itemList: {fileID: 11400000, guid: 0702d508a91f7f845bfab0687632d21c, type: 2}
-  m_picturesAroundModel: 16
-  m_camera: {fileID: 963194227}
+  m_assetLoadedAsset:
+    m_AssetGUID: 344eb8e611bc11c4ab8a6ba37aaa95b2
+    m_SubObjectName: 
+  m_instanceObject: {fileID: 0}
+  StartingEulerAngles: {x: 0, y: 0, z: 0}
+  photoIndexCounter: 0
 --- !u!4 &602650274
 Transform:
   m_ObjectHideFlags: 0

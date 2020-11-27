@@ -14,28 +14,39 @@ public class ExportRoutine : MonoBehaviour
     bool hasRotated = false;
     bool takenPhoto = false;
     bool allScreenshotsTaken = false;
-    public Vector3 currentEulerAngles;
-    int photoIndexCounter = 0;
+    bool startingPhotoTaken = false;
+    bool endPhotoTaken = false;
+    public Vector3 StartingEulerAngles;
+    public int photoIndexCounter = 0;
+    public int itemListNum = 0;
 
     private void Awake()
     {
         //Set Rotate Obj by rotationAmount
         rotateObj = rotationAmount;
+
+        //Get Starting Angle Vars
+        StartingEulerAngles = transform.position;
     }
 
     private void Update()
     {
-        currentEulerAngles = this.transform.rotation.eulerAngles;
+        //currentEulerAngles = this.transform.rotation.eulerAngles;
 
         RotateObjectandScreenCap();
-
     }
 
     void RotateObjectandScreenCap()
     {
-
+        //SpaceBar Function
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            //Rotate the Object
+            this.transform.Rotate(0, rotateObj, 0);
+
+            //Incremenent Counter
+            photoIndexCounter++;
+
             //10 or greater change formating of frame string
             if (photoIndexCounter >= 10)
             {
@@ -46,24 +57,20 @@ public class ExportRoutine : MonoBehaviour
             {   //4 Digits single number output
                 ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame000" + photoIndexCounter.ToString() + ".png");
             }
-
-            //Increament Index Counter
-            photoIndexCounter++;
-
-            this.transform.Rotate(0, rotateObj, 0);
         }
 
         //At Last Photo
-        if (photoIndexCounter == 15)
+        if (photoIndexCounter == 17)
         {
-            //Destroy Current Object
+            //Destroy AND LOADS Load New Object / Increment 
+            LoadItemAtIndex(m_itemList, itemListNum++);
 
-
-            //Increase index and Load in NewObject
 
 
             //Reset
-            photoIndexCounter = 0;
+            //photoIndexCounter = 0;
+
+            Debug.Log("Photos finshed for this object, moving onto the next one!");
         }
     }
 
@@ -73,7 +80,7 @@ public class ExportRoutine : MonoBehaviour
         {
             Debug.LogError("Spawn list not setup correctly");
         }
-        LoadItemAtIndex(m_itemList, 0);
+        LoadItemAtIndex(m_itemList, itemListNum);
     }
 
     private void LoadItemAtIndex(SpawnItemList itemList, int index)
@@ -88,13 +95,21 @@ public class ExportRoutine : MonoBehaviour
         var spawnRotation = Quaternion.identity;
         var parentTransform = this.transform;
 
-
         var loadRoutine = m_assetLoadedAsset.LoadAssetAsync();
         loadRoutine.Completed += LoadRoutine_Completed;
 
         void LoadRoutine_Completed(UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<GameObject> obj)
         {
             m_instanceObject = Instantiate(obj.Result, spawnPosition, spawnRotation, parentTransform);
+
+            //First Screenshot goes here and increment counter
+            
+            if (StartingEulerAngles == new Vector3(0, 0, 0) && startingPhotoTaken == false)
+            {
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame000" + photoIndexCounter.ToString() + ".png");
+                photoIndexCounter++;
+                startingPhotoTaken = true;
+            }
         }
     }
 }
