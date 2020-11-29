@@ -12,35 +12,34 @@ using UnityEditor;
 public class ExportRoutine : MonoBehaviour
 {
     //Their Inbuilt Vars
-    public SpawnItemList m_itemList = null;
-    public AssetReferenceGameObject m_assetLoadedAsset;
-    public GameObject m_instanceObject = null;
+    [SerializeField] SpawnItemList m_itemList = null;
+    [SerializeField] AssetReferenceGameObject m_assetLoadedAsset;
+    [SerializeField] GameObject m_instanceObject = null;
 
-    //My Vars
+    //Rotation float vars
     float rotationAmount = 22.5f;
     float rotateObj;
 
-    bool startingPhotoTaken = false;
-    bool userInput = true;
-    public Vector3 StartingEulerAngles;
-
+    //Photo & Item Int Vars
     public int photoIndexCounter = 0;
+    [SerializeField] int itemListNum = 0;
     private int maxNumOfPhotos = 15;
     private int maxNumOfItems = 6;
-    public int itemListNum = 0;
+
+    //Vector3 and bool Vars
+    private bool startingPhotoTaken = false;
+    private bool userInput = true;
+    private Vector3 StartingEulerAngles;
+
+    //Strings
     public string objectNameGet;
 
-    //Camera Resolution Vars
-    Camera screenshotCamera;
-    int resHeight = 512;
-    int resWidth = 512;
+    //Inhertiance
+    public CameraScreenshot cameraScreenshot;
 
     //Called First Frame
     private void Start()
     {
-        //Set Resolution on Camera for appropriate output 
-        //screenshotCamera.targetTexture = new RenderTexture(resWidth, resHeight, 24);
-
         //Set Rotate Obj by rotationAmount
         rotateObj = rotationAmount;
 
@@ -102,21 +101,9 @@ public class ExportRoutine : MonoBehaviour
             //Incremenent Counter
             photoIndexCounter++;
 
-            //10 or greater change formating of frame string
-            if (photoIndexCounter >= 10)
-            {
-                //4 digits double number output
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame00" + photoIndexCounter.ToString() + ".png", 1);
-
-            }
-            else //Photo frame num is 9 or below
-            {   
-                //4 Digits single number output
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png", 1);
-            }  
+            cameraScreenshot.TakeScreenshot();
         }
 
-        
         if (itemListNum != maxNumOfItems)
         {
             //At Last Photo
@@ -154,7 +141,7 @@ public class ExportRoutine : MonoBehaviour
         GameObject previousGameobject = this.gameObject.transform.GetChild(0).gameObject;
 
         //Wait for 1 second to delete
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1); //Num of seconds
 
         Destroy(previousGameobject);
     }
@@ -165,7 +152,7 @@ public class ExportRoutine : MonoBehaviour
     /// <returns></returns>
     private IEnumerator SpawnObjectDelay()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2); //Num of seconds
 
         //Increament itemListNum for the SpawnList
         itemListNum++;
@@ -182,7 +169,10 @@ public class ExportRoutine : MonoBehaviour
     {
         if (m_instanceObject != null)
         { 
+            //Throwing Data Loss Error - Christian
+            /*
             Destroy(m_instanceObject);
+            */
         }
 
         m_assetLoadedAsset = itemList.GetAssetReferenceAtIndex(index);
@@ -206,7 +196,7 @@ public class ExportRoutine : MonoBehaviour
                 objectNameGet = m_instanceObject.name;
 
                 //First Screenshot goes here and increment counter
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png", 1);
+                cameraScreenshot.TakeScreenshot();
 
                 //First Photo has been 
                 startingPhotoTaken = true;
