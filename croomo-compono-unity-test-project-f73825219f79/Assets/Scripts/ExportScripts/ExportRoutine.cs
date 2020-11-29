@@ -25,6 +25,8 @@ public class ExportRoutine : MonoBehaviour
     public Vector3 StartingEulerAngles;
 
     public int photoIndexCounter = 0;
+    private int maxNumOfPhotos = 15;
+    private int maxNumOfItems = 6;
     public int itemListNum = 0;
     public string objectNameGet;
 
@@ -51,10 +53,11 @@ public class ExportRoutine : MonoBehaviour
     //Called Every Frame
     private void Update()
     {
+        //UserInput and ScreenCapture
         RotateObjectandScreenCap();
         
         //Last Object in List
-        ExitPlayer(6);
+        ExitPlayer(maxNumOfItems);
     }
 
     /// <summary>
@@ -78,7 +81,7 @@ public class ExportRoutine : MonoBehaviour
     /// <param name="index"></param>
     private void ExitPlayer(int index)
     {
-        if (itemListNum == index && photoIndexCounter == 16)
+        if (itemListNum == index && photoIndexCounter == maxNumOfPhotos)
         {
             UnityEditor.EditorApplication.isPlaying = false;
         }
@@ -103,23 +106,21 @@ public class ExportRoutine : MonoBehaviour
             if (photoIndexCounter >= 10)
             {
                 //4 digits double number output
-                //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame00" + photoIndexCounter.ToString() + ".png");
                 ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame00" + photoIndexCounter.ToString() + ".png", 1);
 
             }
             else //Photo frame num is 9 or below
-            {   //4 Digits single number output
-
-                //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame000" + photoIndexCounter.ToString() + ".png");
+            {   
+                //4 Digits single number output
                 ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png", 1);
             }  
         }
 
         
-        if (itemListNum != 6)
+        if (itemListNum != maxNumOfItems)
         {
             //At Last Photo
-            if (photoIndexCounter == 16)
+            if (photoIndexCounter == maxNumOfPhotos)
             {
                 //User can't screenshot/rotate object
                 userInput = false;
