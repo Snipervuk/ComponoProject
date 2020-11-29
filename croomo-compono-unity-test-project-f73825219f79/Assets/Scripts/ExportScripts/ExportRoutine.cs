@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
+using System.Collections;
 
 
 /// <summary>
@@ -19,39 +20,44 @@ public class ExportRoutine : MonoBehaviour
     float rotateObj;
 
     bool startingPhotoTaken = false;
+    bool userInput = true;
     public Vector3 StartingEulerAngles;
 
     public int photoIndexCounter = 0;
     public int itemListNum = 0;
     public string objectNameGet;
 
-    //Called Before Start
-    private void Awake()
+    //Called First Frame
+    private void Start()
     {
         //Set Rotate Obj by rotationAmount
         rotateObj = rotationAmount;
 
         //Get Starting Angle Vars
         StartingEulerAngles = transform.position;
+
+        FirstObjectSetup();
     }
 
-    //Called First Frame
-    private void Start()
+    //Called Every Frame
+    private void Update()
+    {
+        RotateObjectandScreenCap();
+    }
+
+    /// <summary>
+    /// Function for putting the first spawn item in the itemList
+    /// </summary>
+    private void FirstObjectSetup()
     {
         if (m_itemList == null || m_itemList.AssetReferenceCount == 0)
         {
             Debug.LogError("Spawn list not setup correctly");
         }
         LoadItemAtIndex(m_itemList, itemListNum);
-    }
 
-    //Called Every Frame
-    private void Update()
-    {
         //Gets object name when it changes
         objectNameGet = m_instanceObject.name;
-
-        RotateObjectandScreenCap();
     }
 
     /// <summary>
@@ -61,7 +67,7 @@ public class ExportRoutine : MonoBehaviour
     void RotateObjectandScreenCap()
     {
         //SpaceBar Function
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && userInput == true)
         {
             //Rotate the Object
             this.transform.Rotate(0, rotateObj, 0);
@@ -74,29 +80,32 @@ public class ExportRoutine : MonoBehaviour
             {
                 //4 digits double number output
                 //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame00" + photoIndexCounter.ToString() + ".png");
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + "\frame00" + photoIndexCounter.ToString() + ".png");
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame00" + photoIndexCounter.ToString() + ".png");
 
             }
             else //Photo frame num is 9 or below
             {   //4 Digits single number output
 
                 //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame000" + photoIndexCounter.ToString() + ".png");
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + "\frame000" + photoIndexCounter.ToString() + ".png");
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png");
             }  
         }
 
         //At Last Photo
         if (photoIndexCounter == 17)
         {
-            //Increament itemListNum for the SpawnList
-            itemListNum++;
+            //User can't screenshot/rotate object
+            userInput = false;
 
             //Reset for starting photo
             startingPhotoTaken = false;
 
-            //Destroy AND LOADS Load New Object / Increment 
-            LoadItemAtIndex(m_itemList, itemListNum);
-            
+            //Delete Object w/ Delay (1 sec)
+            StartCoroutine(ObjectDeleteDelay());
+
+            //Spawn Object w/ Delay (2 secs)
+            StartCoroutine(SpawnObjectDelay());
+
             //Reset
             photoIndexCounter = 0;
 
@@ -105,13 +114,46 @@ public class ExportRoutine : MonoBehaviour
         }
     }
 
+    
+    /// <summary>
+    /// IEnumerator Timer from System Collections for Object Delete Delay
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator ObjectDeleteDelay()
+    {
+        //Destroy Previous GameObject and get first child as gameObject
+        GameObject previousGameobject = this.gameObject.transform.GetChild(0).gameObject;
+
+        //Wait for 1 second to delete
+        yield return new WaitForSeconds(1);
+
+        Destroy(previousGameobject);
+    }
+
+    /// <summary>
+    /// IEnumerator Timer from System Collections for Object Spawn Delay
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SpawnObjectDelay()
+    {
+        yield return new WaitForSeconds(2);
+
+        //Increament itemListNum for the SpawnList
+        itemListNum++;
+
+        //Destroy AND LOADS Load New Object / Increment 
+        LoadItemAtIndex(m_itemList, itemListNum);
+
+        //User has input again
+        userInput = true;
+    }
+
+
     private void LoadItemAtIndex(SpawnItemList itemList, int index)
     {
         if (m_instanceObject != null)
-        {
-            /*
+        { 
             Destroy(m_instanceObject);
-            */
         }
 
         m_assetLoadedAsset = itemList.GetAssetReferenceAtIndex(index);
@@ -131,12 +173,16 @@ public class ExportRoutine : MonoBehaviour
 
             if (StartingEulerAngles == new Vector3(0, 0, 0) && startingPhotoTaken == false)
             {
+                //Update Object Name var for screenshoot
+                objectNameGet = m_instanceObject.name;
+
                 //First Screenshot goes here and increment counter
-                //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame000" + photoIndexCounter.ToString() + ".png");
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png");
 
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + "a" + "frame000" + photoIndexCounter.ToString() + ".png");
-
+                //Increment
                 photoIndexCounter++;
+
+                //First Photo has been 
                 startingPhotoTaken = true;
             }
         }
