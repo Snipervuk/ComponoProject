@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
 using System.Collections;
+using UnityEditor;
 
 
 /// <summary>
@@ -27,9 +28,17 @@ public class ExportRoutine : MonoBehaviour
     public int itemListNum = 0;
     public string objectNameGet;
 
+    //Camera Resolution Vars
+    Camera screenshotCamera;
+    int resHeight = 512;
+    int resWidth = 512;
+
     //Called First Frame
     private void Start()
     {
+        //Set Resolution on Camera for appropriate output 
+        //screenshotCamera.targetTexture = new RenderTexture(resWidth, resHeight, 24);
+
         //Set Rotate Obj by rotationAmount
         rotateObj = rotationAmount;
 
@@ -43,6 +52,9 @@ public class ExportRoutine : MonoBehaviour
     private void Update()
     {
         RotateObjectandScreenCap();
+        
+        //Last Object in List
+        ExitPlayer(6);
     }
 
     /// <summary>
@@ -58,6 +70,18 @@ public class ExportRoutine : MonoBehaviour
 
         //Gets object name when it changes
         objectNameGet = m_instanceObject.name;
+    }
+
+    /// <summary>
+    /// Exit out of player mode when all photos are done 
+    /// </summary>
+    /// <param name="index"></param>
+    private void ExitPlayer(int index)
+    {
+        if (itemListNum == index && photoIndexCounter == 16)
+        {
+            UnityEditor.EditorApplication.isPlaying = false;
+        }
     }
 
     /// <summary>
@@ -80,19 +104,19 @@ public class ExportRoutine : MonoBehaviour
             {
                 //4 digits double number output
                 //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame00" + photoIndexCounter.ToString() + ".png");
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame00" + photoIndexCounter.ToString() + ".png");
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame00" + photoIndexCounter.ToString() + ".png", 1);
 
             }
             else //Photo frame num is 9 or below
             {   //4 Digits single number output
 
                 //ScreenCapture.CaptureScreenshot(@"Assets\Outputs\Car-1203-Black\frame000" + photoIndexCounter.ToString() + ".png");
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png");
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png", 1);
             }  
         }
 
         //At Last Photo
-        if (photoIndexCounter == 17)
+        if (photoIndexCounter == 16)
         {
             //User can't screenshot/rotate object
             userInput = false;
@@ -177,10 +201,7 @@ public class ExportRoutine : MonoBehaviour
                 objectNameGet = m_instanceObject.name;
 
                 //First Screenshot goes here and increment counter
-                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png");
-
-                //Increment
-                photoIndexCounter++;
+                ScreenCapture.CaptureScreenshot(@"Assets\Outputs\" + objectNameGet.ToString() + @"\frame000" + photoIndexCounter.ToString() + ".png", 1);
 
                 //First Photo has been 
                 startingPhotoTaken = true;
