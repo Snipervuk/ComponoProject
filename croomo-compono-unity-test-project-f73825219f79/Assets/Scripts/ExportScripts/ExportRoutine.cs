@@ -115,26 +115,30 @@ public class ExportRoutine : MonoBehaviour
             }  
         }
 
-        //At Last Photo
-        if (photoIndexCounter == 16)
+        
+        if (itemListNum != 6)
         {
-            //User can't screenshot/rotate object
-            userInput = false;
+            //At Last Photo
+            if (photoIndexCounter == 16)
+            {
+                //User can't screenshot/rotate object
+                userInput = false;
 
-            //Reset for starting photo
-            startingPhotoTaken = false;
+                //Reset for starting photo
+                startingPhotoTaken = false;
 
-            //Delete Object w/ Delay (1 sec)
-            StartCoroutine(ObjectDeleteDelay());
+                //Delete Object w/ Delay (1 sec)
+                StartCoroutine(ObjectDeleteDelay());
 
-            //Spawn Object w/ Delay (2 secs)
-            StartCoroutine(SpawnObjectDelay());
+                //Spawn Object w/ Delay (2 secs)
+                StartCoroutine(SpawnObjectDelay());
 
-            //Reset
-            photoIndexCounter = 0;
+                //Reset
+                photoIndexCounter = 0;
 
-            //For Testing
-            Debug.Log("Photos finished for this object, moving onto " + objectNameGet);
+                //For Testing
+                Debug.Log("Photos finished for this object, moving onto " + objectNameGet);
+            }
         }
     }
 
